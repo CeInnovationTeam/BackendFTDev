@@ -2,6 +2,7 @@ package com.ceinnovation.ftShopCart;
 
 import java.util.*;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ public class MainController {
 	valor total: 100
 }
 */
+@CrossOrigin(origins = "*")	
 @RequestMapping(
 	    value = "/processcart", 
 	    method = RequestMethod.POST,

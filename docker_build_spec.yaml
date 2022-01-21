@@ -1,0 +1,31 @@
+version: 0.1
+component: build
+timeoutInSeconds: 6000
+shell: bash
+
+inputArtifacts:                        
+  - name: app               
+    location: ${OCI_WORKSPACE_DIR}/docker/          
+  - name: apm-agent               
+    url: ${APMAGENTURL}         
+    location: ${OCI_WORKSPACE_DIR}/docker/ 
+
+steps:
+  - type: Command
+    name: "Agent Build"
+    timeoutInSeconds: 4000
+    command: |
+      cd ${OCI_WORKSPACE_DIR}/docker/
+      java -jar apm-agent.jar provision-agent -service-name=ftShopCart -destination=. -private-data-key=${PV_KEY} -data-upload-endpoint=${APM_ENDPOINT}
+
+  - type: Command
+    timeoutInSeconds: 400
+    name: "Dockerizer"
+    command: |
+      cd ${OCI_WORKSPACE_DIR}/docker/
+      docker build --pull --rm -t java-app . 
+      
+outputArtifacts:
+  - name: java-app
+    type: DOCKER_IMAGE
+    location: java-app:${BUILDRUN_HASH}

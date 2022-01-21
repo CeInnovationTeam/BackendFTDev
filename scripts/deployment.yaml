@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-app
+  labels:
+    app: java-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: java-app
+  template:
+    metadata:
+      labels:
+        app: java-app
+    spec:
+      containers:
+      - name: java-app
+        image: ${REGISTRY_REGION}/${IMG_PATH}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+      imagePullSecrets:
+      - name: ocir
+      
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-java-app
+  annotations:
+    service.beta.kubernetes.io/oci-load-balancer-shape: 10Mbps
+spec:
+  selector:
+    app: java-app
+  ports:
+    - port: 8081
+      targetPort: 8081
+  type: LoadBalancer
